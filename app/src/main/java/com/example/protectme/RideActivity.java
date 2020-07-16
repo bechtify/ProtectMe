@@ -14,7 +14,8 @@ public class RideActivity extends AppCompatActivity {
         getSupportActionBar().hide(); //hide the title bar
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ride);
-        ImageView imgFavorite = (ImageView) findViewById(R.id.imageViewBack);
+
+        ImageView imgFavorite = (ImageView) findViewById(R.id.imageViewBack);//for navigation back, due to use of imageView
         imgFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -24,12 +25,12 @@ public class RideActivity extends AppCompatActivity {
         });
     }
 
-    public void stopRide(View view){
+    public void onStopRide(View view){
         Intent intent = new Intent(RideActivity.this, MenuActivity.class);
         startActivity(intent);
     }
 
-    public void startEmergency(View view){
+    public void onStartEmergency(View view){
         Intent intent = new Intent(RideActivity.this, EmergencyActivity.class);
         startActivity(intent);
     }

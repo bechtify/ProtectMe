@@ -16,7 +16,8 @@ public class MenuActivity extends AppCompatActivity {
         getSupportActionBar().hide(); //hide the title bar
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-        ImageView imgFavorite = (ImageView) findViewById(R.id.imageViewLogout);
+
+        ImageView imgFavorite = (ImageView) findViewById(R.id.imageViewLogout);//for navigation back, due to use of imageView
         imgFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -34,8 +35,18 @@ public class MenuActivity extends AppCompatActivity {
         s.setAdapter(adapter);
     }
 
-    public void startRide(View view){
+    public void onStartRide(View view){
         Intent intent = new Intent(MenuActivity.this, RideActivity.class);
+        startActivity(intent);
+    }
+
+    public void onEmergencySettings(View view){
+        Intent intent = new Intent(MenuActivity.this, EmergencySettingsActivity.class);
+        startActivity(intent);
+    }
+
+    public void onEmergencyContacts(View view){
+        Intent intent = new Intent(MenuActivity.this, EmergencyContactsActivity.class);
         startActivity(intent);
     }
 
