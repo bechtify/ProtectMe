@@ -29,4 +29,9 @@ public class RideActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void startEmergency(View view){
+        Intent intent = new Intent(RideActivity.this, EmergencyActivity.class);
+        startActivity(intent);
+    }
+
 }

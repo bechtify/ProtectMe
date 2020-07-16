@@ -8,7 +8,7 @@
 
     <Button
         android:id="@+id/btEmergencySettings"
-        android:layout_width="0dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="54dp"
         android:layout_marginTop="30dp"
@@ -21,24 +21,19 @@
 
     <Spinner
         android:id="@+id/spinner"
-        android:layout_width="0dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="54dp"
-        android:layout_marginTop="216dp"
-        android:layout_marginEnd="54dp"
+        android:layout_marginTop="212dp"
         android:tooltipText="Choose Mobility"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btStartRide"
-        android:layout_width="0dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="54dp"
         android:layout_marginTop="30dp"
-        android:layout_marginEnd="54dp"
         android:onClick="startRide"
         android:text="Start Ride"
         app:layout_constraintEnd_toEndOf="parent"
@@ -47,7 +42,7 @@
 
     <Button
         android:id="@+id/btEmergencyContacts"
-        android:layout_width="0dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="54dp"
         android:layout_marginTop="30dp"
@@ -60,11 +55,12 @@
 
     <Button
         android:id="@+id/btFirstAid"
-        android:layout_width="0dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="54dp"
         android:layout_marginTop="30dp"
         android:layout_marginEnd="54dp"
+        android:backgroundTint="#CC1417"
         android:onClick="firstAid"
         android:text="FIRST AID"
         app:layout_constraintEnd_toEndOf="parent"
