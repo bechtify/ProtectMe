@@ -41,6 +41,9 @@ public class EmergencyActivity extends AppCompatActivity {
         mTime = (TextView) findViewById(R.id.tvTime);
         int minutes=prefs.getInt("npMinutes", 00);
         int seconds=prefs.getInt("npSeconds", 00);
+        if(minutes==00&&seconds==00){
+            seconds=30;//in case user has never changed settings-->default value is 30 sec
+        }
 
         timer = new CountDownTimer(minutes*60000+seconds*1000, 1000) {
 
@@ -89,5 +92,10 @@ public class EmergencyActivity extends AppCompatActivity {
                 Toast.LENGTH_SHORT);
         toast.show();
         mp.stop();//stops the alarm tone
+    }
+
+    public void onBackPressed(){
+        mp.stop();//stops the alarm tone
+        super.onBackPressed();
     }
 }

@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class EmergencyContactsActivity extends AppCompatActivity {
     public ArrayList<EmergencyContact> mData;
-    Adapter mAdapter;
+    EmergencyContactAdapter mAdapter;
 
     SharedPreferences prefs;
     SharedPreferences.Editor e;
@@ -64,7 +64,7 @@ public class EmergencyContactsActivity extends AppCompatActivity {
             }
             contactNumber--;
         }
-        mAdapter =new Adapter(mData);
+        mAdapter =new EmergencyContactAdapter(mData);
         RecyclerView recyclerView=findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(mAdapter);
