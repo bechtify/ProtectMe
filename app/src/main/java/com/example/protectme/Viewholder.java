@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 
-public class MyViewholder extends RecyclerView.ViewHolder implements View.OnClickListener {
+public class Viewholder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     TextView tvUsername;
     TextView tvRelationship;
@@ -19,7 +19,7 @@ public class MyViewholder extends RecyclerView.ViewHolder implements View.OnClic
     TextView tvAddress;
     CheckBox checkBox;
 
-    public MyViewholder(@NonNull View itemView) {
+    public Viewholder(@NonNull View itemView) {
         super(itemView);
         tvUsername=itemView.findViewById(R.id.tvUsername);
         tvRelationship=itemView.findViewById(R.id.tvRelationship);

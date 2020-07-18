@@ -61,4 +61,9 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
         startActivity(intent);
     }
+
+    public void onDev(View view){
+        Intent intent = new Intent(LoginActivity.this, CrashDetectionDevelopmentActivity.class);
+        startActivity(intent);
+    }
 }

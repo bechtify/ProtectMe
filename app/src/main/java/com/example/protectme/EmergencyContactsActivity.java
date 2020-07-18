@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class EmergencyContactsActivity extends AppCompatActivity {
     public ArrayList<EmergencyContact> mData;
-    MyAdapter mMyAdapter;
+    Adapter mAdapter;
 
     SharedPreferences prefs;
     SharedPreferences.Editor e;
@@ -64,14 +64,14 @@ public class EmergencyContactsActivity extends AppCompatActivity {
             }
             contactNumber--;
         }
-        mMyAdapter=new MyAdapter(mData);
+        mAdapter =new Adapter(mData);
         RecyclerView recyclerView=findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(mMyAdapter);
+        recyclerView.setAdapter(mAdapter);
     }
 
     public void onDelete(View view){
-        mMyAdapter.deleteChecked();
+        mAdapter.deleteChecked();
         prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
         e=prefs.edit();
         int i =0;
