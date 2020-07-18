@@ -61,7 +61,6 @@ public class EmergencyContactsActivity extends AppCompatActivity {
             EmergencyContact contact = gson.fromJson(json, EmergencyContact.class);
             if(contact!=null){
                 mData.add(contact);
-                //System.out.println("Contact");
             }
             contactNumber--;
         }
@@ -89,7 +88,6 @@ public class EmergencyContactsActivity extends AppCompatActivity {
             String json = gson.toJson(myObject);
             e.putString(Integer.toString(i), json);
         }
-
         e.commit();
     }
 }
