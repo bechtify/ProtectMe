@@ -12,6 +12,7 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 public class CrashDetectionDevelopmentActivity extends AppCompatActivity implements SensorEventListener {
@@ -27,6 +28,8 @@ public class CrashDetectionDevelopmentActivity extends AppCompatActivity impleme
     double mLocation=0; //m
 
     int crash=0;
+
+    MediaPlayer mp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +59,6 @@ public class CrashDetectionDevelopmentActivity extends AppCompatActivity impleme
             long diffT = event.timestamp - mLastTimeStamp;
             mLastTimeStamp = event.timestamp;
             double diffT_sec = diffT / 1000000000d;
-            //System.out.println(event.values[0] + " time_difference=" + diffT / 1000000d + "ns");
 
 
             double diff_vel = event.values[0] * diffT_sec;
@@ -66,16 +68,15 @@ public class CrashDetectionDevelopmentActivity extends AppCompatActivity impleme
 
             //Weg:
             mLocation=mLocation+mVelocity*diffT_sec;
-            //wegTV.setText(Double.toString(mLocation*100)+" cm");
             tvAcceleration.setText("Acceleration: "+Double.toString(event.values[0]*100)+" cm / s*s");
             if((((mVelocity*100)>138.9)||((mVelocity*100)<-138.9))&&((event.values[0]*100)>10)){ //crash will be detected if Velocity is greater than 5 km/h (negative and positive) and acceleration is greater than 10 cm/s*s
                 if(mCrashTimeStamp==0||((System.currentTimeMillis()-mCrashTimeStamp)>5000)){ //crash can be detected every five seconds
                     crash++;
-                    tvCrashDetected.setText(Integer.toString(crash));
+                    tvCrashDetected.setText("Number of Crashs detected: "+Integer.toString(crash));
                     mCrashTimeStamp = System.currentTimeMillis();
                     Uri alarmSound =
                             RingtoneManager. getDefaultUri (RingtoneManager. TYPE_ALARM );
-                    MediaPlayer mp = MediaPlayer. create (getApplicationContext(), alarmSound);
+                    mp = MediaPlayer. create (getApplicationContext(), alarmSound);
                     mp.start();
                 }
             }
@@ -119,5 +120,9 @@ public class CrashDetectionDevelopmentActivity extends AppCompatActivity impleme
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
+    }
+
+    public void onStopAlarm(View view){
+        mp.stop();
     }
 }

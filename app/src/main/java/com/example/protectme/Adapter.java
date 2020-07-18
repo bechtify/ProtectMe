@@ -5,7 +5,6 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,11 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MyAdapter extends RecyclerView.Adapter<MyViewholder> {
+public class Adapter extends RecyclerView.Adapter<Viewholder> {
 
         ArrayList<EmergencyContact> mData;
     SparseBooleanArray itemStateArray= new SparseBooleanArray();
-    public MyAdapter(ArrayList<EmergencyContact> aData)
+    public Adapter(ArrayList<EmergencyContact> aData)
     {
         mData=aData;
     }
@@ -26,21 +25,21 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewholder> {
     SharedPreferences prefs;
     SharedPreferences.Editor e;
 
-    private List<MyViewholder> viewHolder = new ArrayList<MyViewholder>();
+    private List<Viewholder> viewHolder = new ArrayList<Viewholder>();
 
     @NonNull
     @Override
-    public MyViewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public Viewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater=LayoutInflater.from(parent.getContext());
         View neueView=inflater.inflate(R.layout.emergency_contact,parent,false);
-        MyViewholder viewholder=new MyViewholder(neueView);
+        Viewholder viewholder=new Viewholder(neueView);
         this.viewHolder.add(viewholder);
         return viewholder;
     }
 
     public void deleteChecked(){
         ArrayList<Integer> toDelete = new ArrayList<Integer>();
-        for(MyViewholder mvw : viewHolder){ //marks every entry which has to be deleted
+        for(Viewholder mvw : viewHolder){ //marks every entry which has to be deleted
             if(mvw.isChecked()){
                 toDelete.add(mvw.getAdapterPosition());
             }
@@ -54,7 +53,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewholder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewholder holder, int position) {
+    public void onBindViewHolder(@NonNull Viewholder holder, int position) {
         EmergencyContact contact=mData.get(position);
 
         holder.tvAddress.setText(contact.mAddress);

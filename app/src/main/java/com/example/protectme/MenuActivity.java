@@ -68,7 +68,7 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     public void onFirstAid(View view){
-        Intent intent = new Intent(MenuActivity.this, CrashDetectionDevelopmentActivity.class);
+        Intent intent = new Intent(MenuActivity.this, FirstAidActivity.class);
         startActivity(intent);
     }
 

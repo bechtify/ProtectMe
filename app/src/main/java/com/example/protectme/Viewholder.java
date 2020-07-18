@@ -1,7 +1,6 @@
 package com.example.protectme;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -10,11 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 
-import static android.content.Context.MODE_PRIVATE;
-
-public class MyViewholder extends RecyclerView.ViewHolder implements View.OnClickListener {
+public class Viewholder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     TextView tvUsername;
     TextView tvRelationship;
@@ -23,7 +19,7 @@ public class MyViewholder extends RecyclerView.ViewHolder implements View.OnClic
     TextView tvAddress;
     CheckBox checkBox;
 
-    public MyViewholder(@NonNull View itemView) {
+    public Viewholder(@NonNull View itemView) {
         super(itemView);
         tvUsername=itemView.findViewById(R.id.tvUsername);
         tvRelationship=itemView.findViewById(R.id.tvRelationship);
@@ -49,8 +45,9 @@ public class MyViewholder extends RecyclerView.ViewHolder implements View.OnClic
 
     @Override
     public void onClick(View v) {
-
-        System.out.println("Clicked"+getAdapterPosition());
+        Intent myIntent = new Intent(v.getContext(), EditContactActivity.class);
+        myIntent.putExtra("contactNumber", getAdapterPosition());//get number of item which has been clicked
+        v.getContext().startActivity(myIntent);
     }
 
     public boolean isChecked(){

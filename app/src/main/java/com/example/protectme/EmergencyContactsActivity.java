@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class EmergencyContactsActivity extends AppCompatActivity {
     public ArrayList<EmergencyContact> mData;
-    MyAdapter mMyAdapter;
+    Adapter mAdapter;
 
     SharedPreferences prefs;
     SharedPreferences.Editor e;
@@ -61,18 +61,17 @@ public class EmergencyContactsActivity extends AppCompatActivity {
             EmergencyContact contact = gson.fromJson(json, EmergencyContact.class);
             if(contact!=null){
                 mData.add(contact);
-                //System.out.println("Contact");
             }
             contactNumber--;
         }
-        mMyAdapter=new MyAdapter(mData);
+        mAdapter =new Adapter(mData);
         RecyclerView recyclerView=findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(mMyAdapter);
+        recyclerView.setAdapter(mAdapter);
     }
 
     public void onDelete(View view){
-        mMyAdapter.deleteChecked();
+        mAdapter.deleteChecked();
         prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
         e=prefs.edit();
         int i =0;
@@ -89,7 +88,6 @@ public class EmergencyContactsActivity extends AppCompatActivity {
             String json = gson.toJson(myObject);
             e.putString(Integer.toString(i), json);
         }
-
         e.commit();
     }
 }
