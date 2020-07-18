@@ -1,4 +1,3 @@
-const userService = require("../services/contactService");
 const contactService = require("../services/contactService");
 
 // Handle request for GET /contacts/user/:userId
@@ -52,7 +51,6 @@ const editContact = async (req, res) => {
   try {
     const contactId = parseInt(req.params.contactId);
     const contactInfo = req.body;
-    console.log(contactInfo);
     let result = await contactService.editContact(contactInfo, contactId);
     if (!result) {
       res.send(result);
