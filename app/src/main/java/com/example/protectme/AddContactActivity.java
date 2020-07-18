@@ -35,7 +35,7 @@ public class AddContactActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_contact);
         String[] arraySpinner = new String[] {
-                "Relationship", "Family", "Friends", "Colleagues"};
+                "Relationship", "Family", "Friend", "Colleague"};
         Spinner s = (Spinner) findViewById(R.id.spinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, arraySpinner){

@@ -1,32 +1,57 @@
 package com.example.protectme;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.media.MediaPlayer;
-import android.media.RingtoneManager;
-import android.net.Uri;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-public class RideActivity extends AppCompatActivity implements SensorEventListener {
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
+public class RideActivity extends AppCompatActivity implements SensorEventListener, LocationListener {
 
     long mLastTimeStamp;
     long mCrashTimeStamp;
 
-    double mVelocity=0; //m per s
-    double mLocation=0; //m
+    double mVelocity = 0; //m per s
+    double mLocation = 0; //m
+    double longitude;
+    double latitude;
 
+    TextView tvLocation;
     SharedPreferences prefs;
     SharedPreferences.Editor e;
+
+    FusedLocationProviderClient fusedLocationProviderClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +69,82 @@ public class RideActivity extends AppCompatActivity implements SensorEventListen
 
 
         //Sensor Manager & Listener for measuring speed and acceleration
-        SensorManager manager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-        Sensor accSensor=manager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+        SensorManager manager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        Sensor accSensor = manager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
 
         manager.registerListener(this, accSensor, SensorManager.SENSOR_DELAY_NORMAL);
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        if (ActivityCompat.checkSelfPermission(RideActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            getLocation();
+        } else {
+            ActivityCompat.requestPermissions(RideActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
+        }
+
+        final LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        CountDownTimer timer;
+        timer = new CountDownTimer(10000, 1000) {
+            public void onTick(long millisUntilFinished) {
+                    try {
+                        if (ActivityCompat.checkSelfPermission(RideActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(RideActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        }
+                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, RideActivity.this);
+                    } catch (Exception e) {
+
+                    }
+            }
+
+            public void onFinish() {
+            }
+        }.start();
     }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        tvLocation = (TextView) findViewById(R.id.tvLocation);
+        tvLocation.setText("Location: "+Double.toString(location.getLatitude())+" "+Double.toString(location.getLongitude()));
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        Log.d("Latitude","disable");
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+        Log.d("Latitude","enable");
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        Log.d("Latitude","status");
+    }
+
+
+    private void getLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        }
+        fusedLocationProviderClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                if (location != null) {
+                    try {
+                        Geocoder geocoder = new Geocoder(RideActivity.this, Locale.getDefault());
+                        List<Address> addresses = geocoder.getFromLocation(
+                                location.getLatitude(), location.getLongitude(), 1
+                        );
+                        tvLocation = (TextView) findViewById(R.id.tvLocation);
+                        tvLocation.setText("Location: "+Double.toString(addresses.get(0).getLatitude())+" "+Double.toString(addresses.get(0).getLongitude()));
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
 
     public void onStopRide(View view){
         onBackPressed();
