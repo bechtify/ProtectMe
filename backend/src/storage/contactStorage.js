@@ -32,6 +32,7 @@ const editContact = (contactInfo, contactId) =>
     .where("contact_id", contactId);
 
 const deleteContacts = async (contactIds) => {
+  console.log("Storage");
   const result = await knex("contact").del().whereIn("contact_id", contactIds);
   return result;
 };

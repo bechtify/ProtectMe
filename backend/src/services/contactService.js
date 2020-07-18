@@ -2,10 +2,8 @@ const contactStorage = require("./../storage/contactStorage");
 
 // Service for GET /contacts/user/:userId
 const selectContactsByUserId = async (userId) => {
-  console.log("Service");
   const unparsedData = await contactStorage.selectContactsByUserId(userId);
   const results = JSON.parse(JSON.stringify(unparsedData));
-  console.log(results);
   return results;
 };
 

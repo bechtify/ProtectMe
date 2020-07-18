@@ -67,9 +67,9 @@ const deleteContacts = async (req, res) => {
   try {
     const userId = parseInt(req.params.userId);
     const contactIds = req.body;
-    let result = await userService.deleteContacts(contactIds, userId);
+    let result = await contactService.deleteContacts(contactIds, userId);
     if (result) {
-      res.send(result);
+      res.send();
     } else {
       res.send("Contact not deleted!");
     }
