@@ -3,6 +3,7 @@ package com.example.protectme;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -11,6 +12,10 @@ import android.widget.Spinner;
 
 public class MenuActivity extends AppCompatActivity {
 
+    Spinner mSpinner;
+
+    SharedPreferences prefs;
+    SharedPreferences.Editor e;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getSupportActionBar().hide(); //hide the title bar
@@ -21,21 +26,24 @@ public class MenuActivity extends AppCompatActivity {
         imgFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MenuActivity.this, LoginActivity.class);
-                startActivity(intent);
+                onBackPressed();
             }
         });
         String[] arraySpinner = new String[] {
                 "Choose Mobility", "Bicycle", "Car", "Truck", "Motor Bike"
         };
-        Spinner s = (Spinner) findViewById(R.id.spinner);
+        mSpinner = (Spinner) findViewById(R.id.spinner);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, arraySpinner);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        s.setAdapter(adapter);
+        mSpinner.setAdapter(adapter);
     }
 
     public void onStartRide(View view){
+        prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
+        e=prefs.edit();
+        e.putString("selectedTypeOfMobility", mSpinner.getSelectedItem().toString());
+        e.commit();
         Intent intent = new Intent(MenuActivity.this, RideActivity.class);
         startActivity(intent);
     }
@@ -47,6 +55,11 @@ public class MenuActivity extends AppCompatActivity {
 
     public void onEmergencyContacts(View view){
         Intent intent = new Intent(MenuActivity.this, EmergencyContactsActivity.class);
+        startActivity(intent);
+    }
+
+    public void onFirstAid(View view){
+        Intent intent = new Intent(MenuActivity.this, CrashDetectionDevelopmentActivity.class);
         startActivity(intent);
     }
 

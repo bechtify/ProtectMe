@@ -10,11 +10,17 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 
+
 public class EmergencyContactsActivity extends AppCompatActivity {
-    ArrayList<EmergencyContact> mData;
+    public ArrayList<EmergencyContact> mData;
     MyAdapter mMyAdapter;
+
+    SharedPreferences prefs;
+    SharedPreferences.Editor e;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,25 +31,69 @@ public class EmergencyContactsActivity extends AppCompatActivity {
         imgFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(EmergencyContactsActivity.this, MenuActivity.class);
-                startActivity(intent);
+                onBackPressed();
             }
         });
+
+        addDatatoView();
+    }
+
+    public void onAdd(View view){
+        Intent intent = new Intent(EmergencyContactsActivity.this, AddContactActivity.class);
+        startActivity(intent);
+        onPause();
+    }
+
+    public void onResume() { //reloads Data --> shows newly added input
+        super.onResume();
+        addDatatoView();
+    }
+
+    public void addDatatoView(){
         mData=new ArrayList<>();
-        mData.add(new EmergencyContact("Bechtify","Friend","Simon Becht", "0123456789", "Coblitzallee 9"));
-        mData.add(new EmergencyContact("Toro","Friend","Tobias Rothley", "987654321", "Coblitzallee 10"));
+        prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
+
+        Gson gson = new Gson();
+        int contactNumber=prefs.getInt("contactNumber", -1);
+        System.out.println(contactNumber);
+
+        while(contactNumber>=0){
+            String json=prefs.getString(Integer.toString(contactNumber), null);
+            EmergencyContact contact = gson.fromJson(json, EmergencyContact.class);
+            if(contact!=null){
+                mData.add(contact);
+                //System.out.println("Contact");
+            }
+            contactNumber--;
+        }
+
+        //mData.add(new EmergencyContact("Bechtify","Friend","Simon Becht", "0123456789", "Coblitzallee 9"));
+        //mData.add(new EmergencyContact("Toro","Friend","Tobias Rothley", "987654321", "Coblitzallee 10"));
         mMyAdapter=new MyAdapter(mData);
         RecyclerView recyclerView=findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(mMyAdapter);
     }
 
-    public void onAdd(View view){
-        Intent intent = new Intent(EmergencyContactsActivity.this, AddContactActivity.class);
-        startActivity(intent);
-    }
-
     public void onDelete(View view){
+        mMyAdapter.deleteChecked();
+        prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
+        e=prefs.edit();
+        int i =0;
+        while(prefs.getString(Integer.toString((i)), null)!=null) {//Deletes every contact in shared prefs
+            e.remove(Integer.toString(i));
+            i++;
+        }
+        e.commit();
+        e=prefs.edit();
+        e.putInt("contactNumber", mData.size());//adjusts number of contacts --> when a new contact gets added, this int is used as index for adding the new contact to sharedPrefs
+        for(i=0; i<mData.size(); i++){//adds all remaining contacts from mData to shared prefs
+            EmergencyContact myObject = new EmergencyContact(mData.get(i).mUsername, mData.get(i).mRelationship, mData.get(i).mDisplayName, mData.get(i).mPhone, mData.get(i).mAddress);
+            Gson gson = new Gson();
+            String json = gson.toJson(myObject);
+            e.putString(Integer.toString(i), json);
+        }
 
+        e.commit();
     }
 }

@@ -2,21 +2,25 @@ package com.example.protectme;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
-import com.google.android.material.textfield.TextInputEditText;
+import com.google.gson.Gson;
 
 
 public class AddContactActivity extends AppCompatActivity {
 
-    TextInputEditText username;
+    EditText mUsername;
+    EditText mDisplayName;
+    EditText mPhone;
+    EditText mAddress;
+    Spinner mRelationship;
     SharedPreferences prefs;
     SharedPreferences.Editor e;
 
@@ -38,16 +42,29 @@ public class AddContactActivity extends AppCompatActivity {
         imgFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(AddContactActivity.this, EmergencyContactsActivity.class);
-                startActivity(intent);
+                onBackPressed();
             }
         });
-
-
     }
 
     public void onAdd(View v){
+        mUsername = (EditText) findViewById(R.id.tvUsername);
+        mDisplayName = (EditText) findViewById(R.id.tvDisplayName);
+        mPhone = (EditText) findViewById(R.id.tvPhone);
+        mAddress = (EditText) findViewById(R.id.tvAddress);
+        mRelationship = (Spinner) findViewById(R.id.spinner);
 
+        EmergencyContact myObject = new EmergencyContact(mUsername.getText().toString(), mRelationship.getSelectedItem().toString(), mDisplayName.getText().toString(), mPhone.getText().toString(), mAddress.getText().toString());
+        Gson gson = new Gson();
+        String json = gson.toJson(myObject);//Object gets casted to String in order to save it in SharedPrefs
+        prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
+        int contactNumber = prefs.getInt("contactNumber", 0); //index for adding a contact - prevents overwriting a contact
+        e=prefs.edit();
+        e.putString(Integer.toString(contactNumber), json);
+        contactNumber++;
+        e.putInt("contactNumber", contactNumber);// will be used as kind of index for adding a contact next time - prevents overwriting a contact
+        e.commit();
 
     }
+
 }

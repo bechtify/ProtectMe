@@ -3,6 +3,7 @@ package com.example.protectme;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 
 import android.os.Bundle;
@@ -20,6 +21,11 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLogin(View view){
         Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
+        startActivity(intent);
+    }
+
+    public void onRegister(View view){
+        Intent intent = new Intent(LoginActivity.this, CrashDetectionDevelopmentActivity.class);
         startActivity(intent);
     }
 }

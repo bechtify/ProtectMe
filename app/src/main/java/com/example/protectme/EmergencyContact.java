@@ -1,5 +1,7 @@
 package com.example.protectme;
 
+import android.view.View;
+
 public class EmergencyContact {
     String mUsername;
     String mRelationship;
@@ -13,6 +15,10 @@ public class EmergencyContact {
         this.mDisplayName = mDisplayName;
         this.mPhone = mPhone;
         this.mAddress = mAddress;
+    }
+
+    public void onContact(View view){
+
     }
 
 }
