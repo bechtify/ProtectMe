@@ -2,10 +2,10 @@ const userService = require("../services/userService");
 
 // Handle request for GET /users/:userId
 // If user is requesting himself, he will get more information such as email etc.
-const getUsers = async (req, res) => {
+const getUser = async (req, res) => {
   try {
     const userId = parseInt(req.params.userId);
-    console.log("Controller:"+userId);
+    //console.log("Controller:"+userId);
       let result = await userService.selectUserById(userId);
       if (result) {
         res.send(result);
@@ -17,51 +17,31 @@ const getUsers = async (req, res) => {
   }
 };
 
-// Handle request for GET /users/me
-// Almost the same as /users/:userId
-//This here is called for editing own profile
-const getMe = async (req, res) => {
+// User will be signed up and gets a token generated
+const registerUser = async (req, res) => {
   try {
-    const result = await userService.selectUserById(req.user.id);
-    if (result) {
-      res.send(result);
-    } else {
-      res.send("User not found!");
-    }
-  } catch (e) {
-    res.send({ error: e });
-  }
-};
-
-// Handle request for PUT /users/me --> Update user information
-// User picture is parsed via multer as a middleware
-// With user information as body --> see userService
-const updateMe = async (req, res) => {
-  try {
-    const userInfo = req.body;
     const userImage = req.file;
-    delete userInfo.password;
-    await userService.updateUser(req.user, userInfo, userImage);
-    res.send();
+    const newUser = await authService.signUpUser(req.body, userImage);
+    const token = _generateAuthToken(newUser);
+    res.status(201).json(token);
   } catch (e) {
-    res.send({ error: e });
+    res.status(400).send(e);
   }
 };
 
-// Handle request for POST /users/rating
-// With body {litId: number, typeId: number, value: number, ratedUserId: number}
-const postRating = async (req, res) => {
+// User will be logged in and gets a token generated
+const logInUser = async (req, res, next) => {
   try {
-    await userService.rateUser(req.body, req.user.id);
-    res.send();
+    const user = await authService.logInUser(req.body.email, req.body.password);
+    const token = _generateAuthToken(user);
+    res.send({ token });
   } catch (e) {
-    res.send({ error: e });
+    res.status(400).send(e);
   }
 };
 
 module.exports = {
-  getUsers,
-  getMe,
-  updateMe,
-  postRating
+  getUser,
+  registerUser,
+  logInUser
 };
