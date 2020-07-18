@@ -8,13 +8,13 @@ router.get("/:contactId", contactController.getContact);
 //Get ALL contact from a specific user
 router.get("/user/:userId", contactController.getContacts);
 
-// PUT
-//Update a specific contact --> {JSON-Object}
-router.put("/:contactId", contactController.editContact);
-
 // POST
 //Post new contact for specific user --> {JSON-Object}
 router.post("/:userId", contactController.addContact);
+
+// PUT
+//Update a specific contact --> {JSON-Object}
+router.put("/:contactId", contactController.editContact);
 
 // DELETE
 //Delete contact for a specific user --> [contact_ids]

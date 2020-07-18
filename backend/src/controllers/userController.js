@@ -6,12 +6,12 @@ const getUser = async (req, res) => {
   try {
     const userId = parseInt(req.params.userId);
     //console.log("Controller:"+userId);
-      let result = await userService.selectUserById(userId);
-      if (result) {
-        res.send(result);
-      } else {
-        res.send("User not found!");
-      }
+    let result = await userService.selectUserById(userId);
+    if (result) {
+      res.send(result);
+    } else {
+      res.send("User not found!");
+    }
   } catch (e) {
     res.send({ error: e });
   }
@@ -43,5 +43,5 @@ const logInUser = async (req, res, next) => {
 module.exports = {
   getUser,
   registerUser,
-  logInUser
+  logInUser,
 };
