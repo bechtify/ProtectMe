@@ -19,7 +19,27 @@ const selectContactsByUserId = (userId) =>
 const selectContactById = (contactId) =>
   knex("contact").where("contact_id", contactId);
 
+const addContact = async (contactInfo, user_id) => {
+  const result = await knex("contact").insert({ ...contactInfo });
+  const contact_id = result[0];
+  await knex("user_contacts").insert({ user_id, contact_id });
+  return contact_id;
+};
+
+const editContact = (contactInfo, contactId) =>
+  knex("contact")
+    .update({ ...contactInfo })
+    .where("contact_id", contactId);
+
+const deleteContacts = async (contactIds) => {
+  const result = await knex("contact").del().whereIn("contact_id", contactIds);
+  return result;
+};
+
 module.exports = {
   selectContactsByUserId,
   selectContactById,
+  addContact,
+  editContact,
+  deleteContacts,
 };

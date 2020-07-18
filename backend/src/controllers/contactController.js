@@ -36,8 +36,12 @@ const addContact = async (req, res) => {
   try {
     const userId = parseInt(req.params.userId);
     const contactInfo = req.body;
-    await contactService.addContact(contactInfo, userId);
-    res.send();
+    let result = await contactService.addContact(contactInfo, userId);
+    if (result) {
+      res.send(result);
+    } else {
+      res.send("Contact not added!");
+    }
   } catch (e) {
     res.send({ error: e });
   }
@@ -48,8 +52,13 @@ const editContact = async (req, res) => {
   try {
     const contactId = parseInt(req.params.contactId);
     const contactInfo = req.body;
-    await contactService.editContact(contactInfo, contactId);
-    res.send();
+    console.log(contactInfo);
+    let result = await contactService.editContact(contactInfo, contactId);
+    if (!result) {
+      res.send(result);
+    } else {
+      res.send("Contact not edited!");
+    }
   } catch (e) {
     res.send({ error: e });
   }
@@ -60,8 +69,12 @@ const deleteContacts = async (req, res) => {
   try {
     const userId = parseInt(req.params.userId);
     const contactIds = req.body;
-    await userService.postEmergency(contactIds, userId);
-    res.send();
+    let result = await userService.deleteContacts(contactIds, userId);
+    if (result) {
+      res.send(result);
+    } else {
+      res.send("Contact not deleted!");
+    }
   } catch (e) {
     res.send({ error: e });
   }
