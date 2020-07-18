@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 public class MenuActivity extends AppCompatActivity {
 
@@ -40,12 +41,20 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     public void onStartRide(View view){
-        prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
-        e=prefs.edit();
-        e.putString("selectedTypeOfMobility", mSpinner.getSelectedItem().toString());
-        e.commit();
-        Intent intent = new Intent(MenuActivity.this, RideActivity.class);
-        startActivity(intent);
+        mSpinner = (Spinner) findViewById(R.id.spinner);
+        if(mSpinner.getSelectedItem().toString().equals("Choose Mobility")){
+            Toast toast = Toast.makeText(getApplicationContext(),
+                    "Choose Mobility!",
+                    Toast.LENGTH_SHORT);
+            toast.show();
+        }else{
+            prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
+            e=prefs.edit();
+            e.putString("selectedTypeOfMobility", mSpinner.getSelectedItem().toString());
+            e.commit();
+            Intent intent = new Intent(MenuActivity.this, RideActivity.class);
+            startActivity(intent);
+        }
     }
 
     public void onEmergencySettings(View view){

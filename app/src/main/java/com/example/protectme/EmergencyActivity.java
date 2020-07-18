@@ -10,15 +10,20 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class EmergencyActivity extends AppCompatActivity {
 
     public MediaPlayer mp;
     protected TextView mTime;
+    Button abort;
 
     SharedPreferences prefs;
     SharedPreferences.Editor e;
+
+    CountDownTimer timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +42,7 @@ public class EmergencyActivity extends AppCompatActivity {
         int minutes=prefs.getInt("npMinutes", 00);
         int seconds=prefs.getInt("npSeconds", 00);
 
-        new CountDownTimer(minutes*60000+seconds*1000, 1000) {
+        timer = new CountDownTimer(minutes*60000+seconds*1000, 1000) {
 
             public void onTick(long millisUntilFinished) {
                 long seconds=millisUntilFinished%60000;
@@ -54,7 +59,11 @@ public class EmergencyActivity extends AppCompatActivity {
             }
 
             public void onFinish() {
-                mTime.setText("Emergency Services are called!");
+                mTime.setText("Emergency Services have been called!");
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "Emergency Services have been called!",
+                        Toast.LENGTH_SHORT);
+                toast.show();
             }
         }.start();
 
@@ -67,5 +76,18 @@ public class EmergencyActivity extends AppCompatActivity {
         e.putBoolean("autoAlarm", false);//resets alarm type
         e.commit();
         onBackPressed();//navigates back to ride
+    }
+
+    public void onCallHelp(View view){
+        abort = findViewById(R.id.btAbort);
+        abort.setText("Go Back");
+        timer.cancel();
+        mTime = (TextView) findViewById(R.id.tvTime);
+        mTime.setText("Emergency Services have been called!");
+        Toast toast = Toast.makeText(getApplicationContext(),
+                "Emergency Services have been called!",
+                Toast.LENGTH_SHORT);
+        toast.show();
+        mp.stop();//stops the alarm tone
     }
 }

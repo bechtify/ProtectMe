@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -17,26 +16,33 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+public class RegisterActivity extends AppCompatActivity {
 
-public class AddContactActivity extends AppCompatActivity {
+    EditText username;
+    EditText firstname;
+    EditText surname;
+    Spinner spinnerBloodgroup;
+    EditText password;
 
-    EditText mUsername;
-    EditText mDisplayName;
-    EditText mPhone;
-    EditText mAddress;
-    Spinner mRelationship;
     SharedPreferences prefs;
     SharedPreferences.Editor e;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getSupportActionBar().hide(); //hide the title bar
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); //hides keyboard
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_contact);
+        setContentView(R.layout.activity_register);
+        ImageView imgFavorite = (ImageView) findViewById(R.id.imageViewBack);
+        imgFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
         String[] arraySpinner = new String[] {
-                "Relationship", "Family", "Friends", "Colleagues"};
-        Spinner s = (Spinner) findViewById(R.id.spinner);
+                "Bloodgroup", "A+", "A-", "AB+", "AB-", "B+", "B-", "0+", "0-", "Don't know!"};
+        spinnerBloodgroup = (Spinner) findViewById(R.id.spinnerBloodgroup);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, arraySpinner){
             @Override
@@ -66,42 +72,29 @@ public class AddContactActivity extends AppCompatActivity {
             }
         };
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        s.setAdapter(adapter);
-
-        ImageView imgFavorite = (ImageView) findViewById(R.id.imageViewBack); //for navigation back, due to use of imageView
-        imgFavorite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
+        spinnerBloodgroup.setAdapter(adapter);
     }
 
-    public void onAdd(View v){
-        mUsername = (EditText) findViewById(R.id.tvUsername);
-        mDisplayName = (EditText) findViewById(R.id.tvDisplayName);
-        mPhone = (EditText) findViewById(R.id.tvPhone);
-        mAddress = (EditText) findViewById(R.id.tvAddress);
-        mRelationship = (Spinner) findViewById(R.id.spinner);
-
-        if(mUsername.getText().toString().equals("")||mRelationship.getSelectedItem().toString().equals("Relationship")||mDisplayName.getText().toString().equals("")||mPhone.getText().toString().equals("")||mAddress.getText().toString().equals("")) {
+    public void onRegister(View view){
+        username = (EditText) findViewById(R.id.tvUsername);
+        firstname = (EditText) findViewById(R.id.tvFirstname);
+        surname = (EditText) findViewById(R.id.tvSurname);
+        spinnerBloodgroup = (Spinner) findViewById(R.id.spinnerBloodgroup);
+        password = (EditText) findViewById(R.id.tvPassword);
+        if(username.getText().toString()==null||firstname.getText().toString()==null||surname.getText().toString()==null||spinnerBloodgroup.getSelectedItem().toString().equals("Bloodgroup")||password.getText().toString()==null){
             Toast toast = Toast.makeText(getApplicationContext(),
                     "Fill out all fields",
                     Toast.LENGTH_SHORT);
             toast.show();
-        }else {
-            EmergencyContact myObject = new EmergencyContact(mUsername.getText().toString(), mRelationship.getSelectedItem().toString(), mDisplayName.getText().toString(), mPhone.getText().toString(), mAddress.getText().toString());
+        }else{
+            User newUser = new User(username.getText().toString(), firstname.getText().toString(), surname.getText().toString(), spinnerBloodgroup.getSelectedItem().toString(), password.getText().toString());
             Gson gson = new Gson();
-            String json = gson.toJson(myObject);//Object gets casted to String in order to save it in SharedPrefs
+            String json = gson.toJson(newUser);//Object gets casted to String in order to save it in SharedPrefs
             prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
-            int contactNumber = prefs.getInt("contactNumber", 0); //index for adding a contact - prevents overwriting a contact
             e=prefs.edit();
-            e.putString(Integer.toString(contactNumber), json);
-            contactNumber++;
-            e.putInt("contactNumber", contactNumber);// will be used as kind of index for adding a contact next time - prevents overwriting a contact
+            e.putString(username.getText().toString(), json);
             e.commit();
             onBackPressed();
         }
     }
-
 }

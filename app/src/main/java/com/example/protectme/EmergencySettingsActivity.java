@@ -66,7 +66,6 @@ public class EmergencySettingsActivity extends AppCompatActivity {
         e.putInt("npMinutes", minutesPicker.getValue());
         e.putInt("npSeconds", secondsPicker.getValue());
         e.commit();
-        Intent intent = new Intent(EmergencySettingsActivity.this, MenuActivity.class);
-        startActivity(intent);
+        onBackPressed();
     }
 }

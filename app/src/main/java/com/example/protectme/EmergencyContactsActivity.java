@@ -55,7 +55,6 @@ public class EmergencyContactsActivity extends AppCompatActivity {
 
         Gson gson = new Gson();
         int contactNumber=prefs.getInt("contactNumber", -1);
-        System.out.println(contactNumber);
 
         while(contactNumber>=0){
             String json=prefs.getString(Integer.toString(contactNumber), null);
@@ -66,9 +65,6 @@ public class EmergencyContactsActivity extends AppCompatActivity {
             }
             contactNumber--;
         }
-
-        //mData.add(new EmergencyContact("Bechtify","Friend","Simon Becht", "0123456789", "Coblitzallee 9"));
-        //mData.add(new EmergencyContact("Toro","Friend","Tobias Rothley", "987654321", "Coblitzallee 10"));
         mMyAdapter=new MyAdapter(mData);
         RecyclerView recyclerView=findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
