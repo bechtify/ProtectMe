@@ -6,12 +6,12 @@ const getContacts = async (req, res) => {
     const userId = parseInt(req.params.userId);
     let result = await contactService.selectContactsByUserId(userId);
     if (result) {
-      res.send(result);
+      res.status(200).json(result);
     } else {
-      res.send("Contacts not found!");
+      res.status(404).json("Contacts not found!");
     }
   } catch (e) {
-    res.send({ error: e });
+    res.status(400).send({ error: e });
   }
 };
 
@@ -21,12 +21,12 @@ const getContact = async (req, res) => {
     const contactId = parseInt(req.params.contactId);
     let result = await contactService.selectContactById(contactId);
     if (result) {
-      res.send(result);
+      res.status(200).json(result);
     } else {
-      res.send("Contact not found!");
+      res.status(404).json("Contact not found!");
     }
   } catch (e) {
-    res.send({ error: e });
+    res.status(400).send({ error: e });
   }
 };
 
@@ -37,12 +37,12 @@ const addContact = async (req, res) => {
     const contactInfo = req.body;
     let result = await contactService.addContact(contactInfo, userId);
     if (result) {
-      res.send(result);
+      res.status(201).json(result);
     } else {
-      res.send("Contact not added!");
+      res.status(400).json("Contact not added!");
     }
   } catch (e) {
-    res.send({ error: e });
+    res.status(400).send({ error: e });
   }
 };
 
@@ -53,12 +53,12 @@ const editContact = async (req, res) => {
     const contactInfo = req.body;
     let result = await contactService.editContact(contactInfo, contactId);
     if (!result) {
-      res.send(result);
+      res.status(200).json(result);
     } else {
-      res.send("Contact not edited!");
+      res.status(400).json("Contact not edited!");
     }
   } catch (e) {
-    res.send({ error: e });
+    res.status(400).send({ error: e });
   }
 };
 
@@ -69,12 +69,12 @@ const deleteContacts = async (req, res) => {
     const contactIds = req.body;
     let result = await contactService.deleteContacts(contactIds, userId);
     if (result) {
-      res.send();
+      res.sendStatus(200);
     } else {
-      res.send("Contact not deleted!");
+      res.status(400).json("Contact not deleted!");
     }
   } catch (e) {
-    res.send({ error: e });
+    res.status(400).send({ error: e });
   }
 };
 

@@ -1,42 +1,47 @@
 const userService = require("../services/userService");
 
 // Handle request for GET /users/:userId
-// If user is requesting himself, he will get more information such as email etc.
 const getUser = async (req, res) => {
   try {
     const userId = parseInt(req.params.userId);
-    //console.log("Controller:"+userId);
     let result = await userService.selectUserById(userId);
     if (result) {
-      res.send(result);
+      res.status(200).json(result);
     } else {
-      res.send("User not found!");
+      res.status(404).json("User not found!");
     }
   } catch (e) {
-    res.send({ error: e });
+    res.status(400).send({ error: e });
   }
 };
 
-// User will be signed up and gets a token generated
+// Handle request for POST /users/register
 const registerUser = async (req, res) => {
   try {
-    const userImage = req.file;
-    const newUser = await authService.signUpUser(req.body, userImage);
-    const token = _generateAuthToken(newUser);
-    res.status(201).json(token);
+    const userInfo = req.body;
+    let result = await userService.registerUser(userInfo);
+    if (result) {
+      res.status(200).json(result);
+    } else {
+      res.status(400).json("User not registered!");
+    }
   } catch (e) {
-    res.status(400).send(e);
+    res.status(400).send({ error: e });
   }
 };
 
-// User will be logged in and gets a token generated
+// Handle request for POST /users/login
 const logInUser = async (req, res, next) => {
   try {
-    const user = await authService.logInUser(req.body.email, req.body.password);
-    const token = _generateAuthToken(user);
-    res.send({ token });
+    const credentials = req.body;
+    let result = await userService.logInUser(credentials.username, credentials.password);
+    if (result) {
+      res.status(200).json(result);
+    } else {
+      res.status(400).json("User not logged in!");
+    }
   } catch (e) {
-    res.status(400).send(e);
+    res.status(400).send({ error: e });
   }
 };
 
