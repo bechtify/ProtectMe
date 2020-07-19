@@ -1,4 +1,5 @@
 const contactStorage = require("./../storage/contactStorage");
+const userService = require("./../services/userService");
 
 // Service for GET /contacts/user/:userId
 const selectContactsByUserId = async (userId) => {
@@ -17,9 +18,16 @@ const selectContactById = async (contactId) => {
 // Service for POST /contacts/:userId
 const addContact = async (contactInfo, userId) => {
   try {
-    const newContactId = await contactStorage.addContact(contactInfo, userId);
-    const newContact = await selectContactById(newContactId);
-    return newContact;
+    const alreadyExists = await userService.selectUserByUsername(
+      contactInfo.username
+    );
+    if (alreadyExists) {
+      const newContactId = await contactStorage.addContact(contactInfo, userId);
+      const newContact = await selectContactById(newContactId);
+      return newContact;
+    } else {
+      return Promise.reject("Username not found");
+    }
   } catch (e) {
     return e;
   }

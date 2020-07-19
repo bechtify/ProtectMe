@@ -1,7 +1,6 @@
 const emergencyService = require("../services/emergencyService");
 
-// Handle request for POST /users/rating
-// With body {litId: number, typeId: number, value: number, ratedUserId: number}
+// Handle request for POST /emergencies/:userId
 const postEmergency = async (req, res) => {
   try {
     const userId = parseInt(req.params.userId);
