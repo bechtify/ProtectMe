@@ -4,15 +4,14 @@ const userService = require("../services/userService");
 const getUser = async (req, res) => {
   try {
     const userId = parseInt(req.params.userId);
-    //console.log("Controller:"+userId);
     let result = await userService.selectUserById(userId);
     if (result) {
-      res.send(result);
+      res.status(200).json(result);
     } else {
-      res.send("User not found!");
+      res.status(404).json("User not found!");
     }
   } catch (e) {
-    res.send({ error: e });
+    res.status(400).send({ error: e });
   }
 };
 
@@ -22,12 +21,12 @@ const registerUser = async (req, res) => {
     const userInfo = req.body;
     let result = await userService.registerUser(userInfo);
     if (result) {
-      res.json(result);
+      res.status(200).json(result);
     } else {
-      res.send("User not created!");
+      res.status(400).json("User not registered!");
     }
   } catch (e) {
-    res.send({ error: e });
+    res.status(400).send({ error: e });
   }
 };
 
@@ -37,12 +36,12 @@ const logInUser = async (req, res, next) => {
     const credentials = req.body;
     let result = await userService.logInUser(credentials.username, credentials.password);
     if (result) {
-      res.json(result);
+      res.status(200).json(result);
     } else {
-      res.send("User not logged in!");
+      res.status(400).json("User not logged in!");
     }
   } catch (e) {
-    res.send({ error: e });
+    res.status(400).send({ error: e });
   }
 };
 

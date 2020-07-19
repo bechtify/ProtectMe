@@ -8,12 +8,12 @@ const postEmergency = async (req, res) => {
     const emergencyInfo = req.body;
     let result = await emergencyService.postEmergency(emergencyInfo, userId);
     if (result) {
-      res.send();
+      res.sendStatus(200);
     } else {
-      res.send("Emergency not added!");
+      res.status(400).json("Emergency not added!");
     }
   } catch (e) {
-    res.send({ error: e });
+    res.status(400).send({ error: e });
   }
 };
 
