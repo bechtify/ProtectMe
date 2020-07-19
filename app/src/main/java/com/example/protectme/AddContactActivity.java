@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -95,7 +96,7 @@ public class AddContactActivity extends AppCompatActivity {
         mRelationship = (Spinner) findViewById(R.id.spinner);
 
         final SharedPreferences prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
-        Thread thread = new Thread(new Runnable() {
+        Thread thread = new Thread(){
 
             @Override
             public void run() {
@@ -144,7 +145,6 @@ public class AddContactActivity extends AppCompatActivity {
                         });
                         throw new IOException("Invalid response from server: " + code);
                     }
-                    onBackPressed();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -154,7 +154,7 @@ public class AddContactActivity extends AppCompatActivity {
                     }
                 }
             }
-        });
+        };
         if(mUsername.getText().toString()==null||mRelationship.getSelectedItem().toString().equals("Relationship")||mDisplayName.getText().toString()==null||mPhone.getText().toString()==null||mAddress.getText().toString()==null){
             Toast toast = Toast.makeText(getApplicationContext(),
                     "Fill out all fields",
@@ -162,6 +162,7 @@ public class AddContactActivity extends AppCompatActivity {
             toast.show();
         }else{
             thread.start();
+            onBackPressed();
         }
     }
 
