@@ -1,6 +1,8 @@
 const express = require("express");
+const https = require("https");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const fs = require("fs")
 
 const emergencyRoutes = require("./routes/emergencyRoutes");
 const userRoutes = require("./routes/userRoutes");
@@ -21,6 +23,14 @@ server.use("/emergencies", emergencyRoutes);
 server.use("/users", userRoutes);
 server.use("/contacts", contactRoutes);
 
-server.listen(env.port, () => {
+https.createServer({
+  key: fs.readFileSync('./key.pem'),
+  cert: fs.readFileSync('./cert.pem'),
+  passphrase: 'protectMe'
+},server).listen(env.port, () => {
   console.log("Server started on Port "+env.port);
 });
+
+// server.listen(env.port, () => {
+//   console.log("Server started on Port "+env.port);
+// });
