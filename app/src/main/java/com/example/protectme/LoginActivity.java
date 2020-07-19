@@ -14,6 +14,18 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import org.json.JSONObject;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 public class LoginActivity extends AppCompatActivity {
 
     EditText username;
@@ -33,27 +45,68 @@ public class LoginActivity extends AppCompatActivity {
     public void onLogin(View view){
         username = (EditText) findViewById(R.id.tvUsername);
         password  = (EditText) findViewById(R.id.tvPassword);
-        String typedUsername = username.getText().toString();
         prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
-        if (prefs.getString(typedUsername, null)!=null){
-            Gson gson = new Gson();
-            String user = prefs.getString(typedUsername, null);
-            User selectedUser = gson.fromJson(user, User.class);
-            if(selectedUser.mPassword.equals(password.getText().toString())){
-                Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
-                startActivity(intent);
-            }else{
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        "Incorrect Password",
-                        Toast.LENGTH_SHORT);
-                toast.show();
+
+        Thread thread = new Thread(){
+            public void run(){
+                HttpURLConnection urlConnection=null;
+                try  {
+                    String jsonString = new JSONObject()
+                            .put("username", username.getText().toString())
+                            .put("password", password.getText().toString())
+                            .toString();
+                    URL url = new URL("https://protectme.the-rothley.de/users/login");
+                    urlConnection  = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestProperty("Content-Type", "application/json");
+                    urlConnection.setRequestMethod("POST");
+                    urlConnection.setDoOutput(true);
+                    urlConnection.setDoInput(true);
+                    urlConnection.setChunkedStreamingMode(0);
+                    OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
+                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+                            out, "UTF-8"));
+                    writer.write(jsonString);
+                    writer.flush();
+
+                    int code = urlConnection.getResponseCode();
+                    if (code !=  200 && code !=  201) {
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                Toast toast = Toast.makeText(LoginActivity.this,
+                                        "Invalid credentials.",
+                                        Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
+                        });
+                        throw new IOException("Invalid response from server: " + code);
+                    }
+
+                    BufferedReader rd = new BufferedReader(new InputStreamReader(
+                            urlConnection.getInputStream()));
+
+                    String userID = rd.readLine();
+                    e=prefs.edit();
+                    e.putString("userID", userID);
+                    e.commit();
+                    Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                finally {
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
+                    }
+                }
             }
-        }
-        else{
+        };
+        if(username.getText().toString().equals("")||password.getText().toString().equals("")){
             Toast toast = Toast.makeText(getApplicationContext(),
-                    "Incorrect Username",
+                    "Please fill out all fields.",
                     Toast.LENGTH_SHORT);
             toast.show();
+        }else{
+            thread.start();
         }
     }
 

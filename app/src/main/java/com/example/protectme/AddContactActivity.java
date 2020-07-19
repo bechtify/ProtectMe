@@ -17,6 +17,16 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import org.json.JSONObject;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 
 public class AddContactActivity extends AppCompatActivity {
 
@@ -84,23 +94,74 @@ public class AddContactActivity extends AppCompatActivity {
         mAddress = (EditText) findViewById(R.id.tvAddress);
         mRelationship = (Spinner) findViewById(R.id.spinner);
 
-        if(mUsername.getText().toString().equals("")||mRelationship.getSelectedItem().toString().equals("Relationship")||mDisplayName.getText().toString().equals("")||mPhone.getText().toString().equals("")||mAddress.getText().toString().equals("")) {
+        final SharedPreferences prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
+        Thread thread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                HttpURLConnection urlConnection=null;
+                try  {
+                    String jsonString = new JSONObject()
+                            .put("username", mUsername.getText().toString())
+                            .put("display_name", mDisplayName.getText().toString())
+                            .put("phone", mPhone.getText().toString())
+                            .put("address", mAddress.getText().toString())
+                            .put("relationship", mRelationship.getSelectedItem().toString())
+                            .toString();
+                    String userID = prefs.getString("userID", null);
+                    URL url = new URL("https://protectme.the-rothley.de/contacts/"+userID);
+                    urlConnection  = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestProperty("Content-Type", "application/json");
+                    urlConnection.setRequestMethod("POST");
+                    urlConnection.setDoOutput(true);
+                    urlConnection.setDoInput(true);
+                    urlConnection.setChunkedStreamingMode(0);
+                    OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
+                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+                            out, "UTF-8"));
+                    writer.write(jsonString);
+                    writer.flush();
+
+                    int code = urlConnection.getResponseCode();
+                    if (code ==  400) {
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                Toast toast = Toast.makeText(AddContactActivity.this,
+                                        "Could not find Username.",
+                                        Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
+                        });
+                        throw new IOException("Invalid response from server: " + code);
+                    }else if (code !=  200 && code !=  201) {
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                Toast toast = Toast.makeText(AddContactActivity.this,
+                                        "Could not add contact.",
+                                        Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
+                        });
+                        throw new IOException("Invalid response from server: " + code);
+                    }
+                    onBackPressed();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                finally {
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
+                    }
+                }
+            }
+        });
+        if(mUsername.getText().toString()==null||mRelationship.getSelectedItem().toString().equals("Relationship")||mDisplayName.getText().toString()==null||mPhone.getText().toString()==null||mAddress.getText().toString()==null){
             Toast toast = Toast.makeText(getApplicationContext(),
                     "Fill out all fields",
                     Toast.LENGTH_SHORT);
             toast.show();
-        }else {
-            EmergencyContact myObject = new EmergencyContact(mUsername.getText().toString(), mRelationship.getSelectedItem().toString(), mDisplayName.getText().toString(), mPhone.getText().toString(), mAddress.getText().toString());
-            Gson gson = new Gson();
-            String json = gson.toJson(myObject);//Object gets casted to String in order to save it in SharedPrefs
-            prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
-            int contactNumber = prefs.getInt("contactNumber", 0); //index for adding a contact - prevents overwriting a contact
-            e=prefs.edit();
-            e.putString(Integer.toString(contactNumber), json);
-            contactNumber++;
-            e.putInt("contactNumber", contactNumber);// will be used as kind of index for adding a contact next time - prevents overwriting a contact
-            e.commit();
-            onBackPressed();
+        }else{
+            thread.start();
         }
     }
 

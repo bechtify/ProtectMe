@@ -1,17 +1,17 @@
 package com.example.protectme;
 
 public class User {
-    String mUsername;
-    String mFirstname;
-    String mSurename;
-    String mBloodgroup;
-    String mPassword;
+    String username;
+    String firstname;
+    String surname;
+    String bloodgroup;
+    String password;
 
-    public User(String mUsername, String mFirstname, String mSurename, String mBloodgroup, String mPassword) {
-        this.mUsername = mUsername;
-        this.mFirstname = mFirstname;
-        this.mSurename = mSurename;
-        this.mBloodgroup = mBloodgroup;
-        this.mPassword = mPassword;
+    public User(String username, String firstname, String surname, String bloodgroup, String password) {
+        this.username = username;
+        this.firstname = firstname;
+        this.surname = surname;
+        this.bloodgroup = bloodgroup;
+        this.password = password;
     }
 }

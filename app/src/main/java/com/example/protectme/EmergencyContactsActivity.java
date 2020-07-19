@@ -9,9 +9,19 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import org.json.JSONObject;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 
 
@@ -50,7 +60,59 @@ public class EmergencyContactsActivity extends AppCompatActivity {
     }
 
     public void addDatatoView(){
-        mData=new ArrayList<>();
+        final SharedPreferences prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
+        Thread thread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                HttpURLConnection urlConnection=null;
+                try  {
+                    String jsonString = new JSONObject()
+                            /*.put("firstname", .getText().toString())
+                            .put("firstname", m.getText().toString())
+                            .put("surname", surname.getText().toString())
+                            .put("bloodgroup", bloodgroup)
+                            .put("password", password.getText().toString())*/
+                            .toString();
+                    String userID = prefs.getString("userID", null);
+                    URL url = new URL("https://protectme.the-rothley.de/contacts/"+userID);
+                    urlConnection  = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestProperty("Content-Type", "application/json");
+                    urlConnection.setRequestMethod("POST");
+                    urlConnection.setDoOutput(true);
+                    urlConnection.setDoInput(true);
+                    urlConnection.setChunkedStreamingMode(0);
+                    OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
+                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+                            out, "UTF-8"));
+                    writer.write(jsonString);
+                    writer.flush();
+
+                    int code = urlConnection.getResponseCode();
+                    if (code !=  200 && code !=  201) {
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                Toast toast = Toast.makeText(EmergencyContactsActivity.this,
+                                        "Could not add contact.",
+                                        Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
+                        });
+                        throw new IOException("Invalid response from server: " + code);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                finally {
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
+                    }
+                }
+            }
+        });
+        //thread.start();
+        //onBackPressed();
+        /*mData=new ArrayList<>();
         prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
 
         Gson gson = new Gson();
@@ -67,7 +129,7 @@ public class EmergencyContactsActivity extends AppCompatActivity {
         mAdapter =new EmergencyContactAdapter(mData);
         RecyclerView recyclerView=findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(mAdapter);
+        recyclerView.setAdapter(mAdapter);*/
     }
 
     public void onDelete(View view){

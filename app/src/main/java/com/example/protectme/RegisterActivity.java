@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -15,6 +16,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+
+import org.json.JSONObject;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -81,19 +94,68 @@ public class RegisterActivity extends AppCompatActivity {
         surname = (EditText) findViewById(R.id.tvSurname);
         spinnerBloodgroup = (Spinner) findViewById(R.id.spinnerBloodgroup);
         password = (EditText) findViewById(R.id.tvPassword);
+
+        Thread thread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                HttpURLConnection urlConnection=null;
+                String bloodgroup=null;
+                if(spinnerBloodgroup.getSelectedItem().toString().equals("Don't know!")){
+                    bloodgroup = "None";
+                }else{
+                    bloodgroup = spinnerBloodgroup.getSelectedItem().toString();
+                }
+                try  {
+                    String jsonString = new JSONObject()
+                            .put("username", username.getText().toString())
+                            .put("firstname", firstname.getText().toString())
+                            .put("surname", surname.getText().toString())
+                            .put("bloodgroup", bloodgroup)
+                            .put("password", password.getText().toString())
+                            .toString();
+                    URL url = new URL("https://protectme.the-rothley.de/users/register");
+                    urlConnection  = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestProperty("Content-Type", "application/json");
+                    urlConnection.setRequestMethod("POST");
+                    urlConnection.setDoOutput(true);
+                    urlConnection.setDoInput(true);
+                    urlConnection.setChunkedStreamingMode(0);
+                    OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
+                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+                            out, "UTF-8"));
+                    writer.write(jsonString);
+                    writer.flush();
+
+                    int code = urlConnection.getResponseCode();
+                    if (code !=  200 && code !=  201) {
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                Toast toast = Toast.makeText(RegisterActivity.this,
+                                        "Invalid credentials.",
+                                        Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
+                        });
+                        throw new IOException("Invalid response from server: " + code);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                finally {
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
+                    }
+                }
+            }
+        });
         if(username.getText().toString()==null||firstname.getText().toString()==null||surname.getText().toString()==null||spinnerBloodgroup.getSelectedItem().toString().equals("Bloodgroup")||password.getText().toString()==null){
             Toast toast = Toast.makeText(getApplicationContext(),
                     "Fill out all fields",
                     Toast.LENGTH_SHORT);
             toast.show();
         }else{
-            User newUser = new User(username.getText().toString(), firstname.getText().toString(), surname.getText().toString(), spinnerBloodgroup.getSelectedItem().toString(), password.getText().toString());
-            Gson gson = new Gson();
-            String json = gson.toJson(newUser);//Object gets casted to String in order to save it in SharedPrefs
-            prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
-            e=prefs.edit();
-            e.putString(username.getText().toString(), json);
-            e.commit();
+            thread.start();
             onBackPressed();
         }
     }
