@@ -181,10 +181,6 @@ public class RideActivity extends AppCompatActivity implements SensorEventListen
                     if(activeAlarm==false) {
                         Intent intent = new Intent(RideActivity.this, EmergencyActivity.class);
                         intent.putExtra("alarmtype", "automatic");
-                        prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
-                        e = prefs.edit();
-                        e.putBoolean("autoAlarm", true);
-                        e.commit();
                         activeAlarm = true;
                         startActivity(intent);
                     }

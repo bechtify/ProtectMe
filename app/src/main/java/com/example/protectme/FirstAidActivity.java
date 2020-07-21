@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -56,9 +57,7 @@ public class FirstAidActivity extends AppCompatActivity {
     }
 
     public void onCallHelp(View view){
-        Toast toast = Toast.makeText(getApplicationContext(),
-                "Emergency Services have been called!",
-                Toast.LENGTH_SHORT);
-        toast.show();
+        Intent intent = new Intent(FirstAidActivity.this, EmergencyActivity.class);
+        startActivity(intent);
     }
 }
