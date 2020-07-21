@@ -37,6 +37,9 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getSupportActionBar().hide(); //hide the title bar
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); //hides keyboard
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
         username = (EditText) findViewById(R.id.tvUsername);
         password  = (EditText) findViewById(R.id.tvPassword);
         prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
@@ -48,9 +51,6 @@ public class LoginActivity extends AppCompatActivity {
         if(passwordValue!=null){
             password.setText(passwordValue);
         }
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); //hides keyboard
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
     }
 
     public void onLogin(View view){
