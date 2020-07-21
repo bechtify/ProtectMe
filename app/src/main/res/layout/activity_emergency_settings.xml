@@ -51,7 +51,7 @@
         android:id="@+id/textView3"
         android:layout_width="380dp"
         android:layout_height="58dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="70dp"
         android:text="Edit time before emergency services are called"
         android:textAlignment="center"
         android:textSize="24sp"
@@ -63,12 +63,12 @@
         android:id="@+id/btSave"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="139dp"
+        android:layout_marginBottom="30dp"
         android:onClick="onSave"
         android:text="Save"
+        app:layout_constraintBottom_toTopOf="@+id/imageView6"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
