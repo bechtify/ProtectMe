@@ -6,8 +6,7 @@ const selectContactsByUserId = (userId) =>
     .where("user_contacts.user_id", userId)
     .select(
       "c.contact_id",
-      "c.firstname",
-      "c.surname",
+      "c.username",
       "c.display_name",
       "c.phone",
       "c.address",
