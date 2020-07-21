@@ -37,6 +37,17 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getSupportActionBar().hide(); //hide the title bar
+        username = (EditText) findViewById(R.id.tvUsername);
+        password  = (EditText) findViewById(R.id.tvPassword);
+        prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
+        String usernameValue = prefs.getString("username", null);
+        String passwordValue = prefs.getString("password", null);
+        if(usernameValue!=null){
+            username.setText(usernameValue);
+        }
+        if(passwordValue!=null){
+            password.setText(passwordValue);
+        }
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); //hides keyboard
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
@@ -51,6 +62,10 @@ public class LoginActivity extends AppCompatActivity {
             public void run(){
                 HttpURLConnection urlConnection=null;
                 try  {
+                    e =prefs.edit();
+                    e.putString("username", username.getText().toString());
+                    e.putString("password", password.getText().toString());
+                    e.commit();
                     String jsonString = new JSONObject()
                             .put("username", username.getText().toString())
                             .put("password", password.getText().toString())
