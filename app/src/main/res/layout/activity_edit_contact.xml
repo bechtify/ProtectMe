@@ -73,7 +73,8 @@
             android:id="@+id/tvUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Username" />
+            android:editable="false"
+            android:hint="Username (cannot be edited)" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Spinner

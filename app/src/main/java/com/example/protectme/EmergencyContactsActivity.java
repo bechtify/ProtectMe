@@ -90,8 +90,72 @@ public class EmergencyContactsActivity extends AppCompatActivity {
     }
 
     public void onDelete(View view){
+        ArrayList<EmergencyContact> oldData = new ArrayList<>(mData);
         mAdapter.deleteChecked();
-        prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
+        ArrayList<String> contactIdsToDelete = new ArrayList<>();
+        for(int i =0; i< oldData.size(); i++) {
+            if (mData.contains(oldData.get(i))==false){
+                contactIdsToDelete.add(oldData.get(i).contact_id);
+            }
+        }
+        final String json = new Gson().toJson(contactIdsToDelete);
+        final SharedPreferences prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
+
+        Thread thread = new Thread(){
+
+            @Override
+            public void run() {
+                HttpURLConnection urlConnection=null;
+                try  {
+
+                    String userID = prefs.getString("userID", null);
+                    URL url = new URL("https://protectme.the-rothley.de/contacts/"+userID);
+                    urlConnection  = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestProperty("Content-Type", "application/json");
+                    urlConnection.setRequestMethod("DELETE");
+                    urlConnection.setDoOutput(true);
+                    urlConnection.setDoInput(true);
+                    urlConnection.setChunkedStreamingMode(0);
+                    OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
+                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+                            out, "UTF-8"));
+                    writer.write(json);
+                    writer.flush();
+
+                    int code = urlConnection.getResponseCode();
+                    if (code ==  400) {
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                Toast toast = Toast.makeText(EmergencyContactsActivity.this,
+                                        "Could not delete user.",
+                                        Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
+                        });
+                        throw new IOException("Invalid response from server: " + code);
+                    }else if (code !=  200 && code !=  201) {
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                Toast toast = Toast.makeText(EmergencyContactsActivity.this,
+                                        "Could not delete user.",
+                                        Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
+                        });
+                        throw new IOException("Invalid response from server: " + code);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                finally {
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
+                    }
+                }
+            }
+        };
+        thread.start();
+        /*prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
         e=prefs.edit();
         int i =0;
         while(prefs.getString(Integer.toString((i)), null)!=null) {//Deletes every contact in shared prefs
@@ -107,7 +171,7 @@ public class EmergencyContactsActivity extends AppCompatActivity {
             //String json = gson.toJson(myObject);
             //e.putString(Integer.toString(i), json);
         }
-        e.commit();
+        e.commit();*/
     }
 
     public void addData(String response){
