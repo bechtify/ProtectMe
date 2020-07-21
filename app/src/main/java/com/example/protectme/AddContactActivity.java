@@ -36,8 +36,6 @@ public class AddContactActivity extends AppCompatActivity {
     EditText mPhone;
     EditText mAddress;
     Spinner mRelationship;
-    SharedPreferences prefs;
-    SharedPreferences.Editor e;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

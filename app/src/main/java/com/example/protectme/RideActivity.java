@@ -44,8 +44,8 @@ public class RideActivity extends AppCompatActivity implements SensorEventListen
 
     double mVelocity = 0; //m per s
     double mLocation = 0; //m
-    double longitude;
-    double latitude;
+    String longitude;
+    String latitude;
 
     TextView tvLocation;
     SharedPreferences prefs;
@@ -136,6 +136,8 @@ public class RideActivity extends AppCompatActivity implements SensorEventListen
                                 location.getLatitude(), location.getLongitude(), 1
                         );
                         tvLocation = (TextView) findViewById(R.id.tvLocation);
+                        longitude = Double.toString(addresses.get(0).getLongitude());
+                        latitude = Double.toString(addresses.get(0).getLatitude());
                         tvLocation.setText("Location: "+Double.toString(addresses.get(0).getLatitude())+" "+Double.toString(addresses.get(0).getLongitude()));
                     } catch (IOException ex) {
                         ex.printStackTrace();
@@ -152,6 +154,8 @@ public class RideActivity extends AppCompatActivity implements SensorEventListen
 
     public void onStartEmergency(View view){
         Intent intent = new Intent(RideActivity.this, EmergencyActivity.class);
+        intent.putExtra("longitude", longitude);
+        intent.putExtra("latitude", latitude);
         startActivity(intent);
     }
 
@@ -172,6 +176,7 @@ public class RideActivity extends AppCompatActivity implements SensorEventListen
                 if(mCrashTimeStamp==0||((System.currentTimeMillis()-mCrashTimeStamp)>5000)){ //crash can be detected every five seconds
                     mCrashTimeStamp = System.currentTimeMillis();
                     Intent intent = new Intent(RideActivity.this, EmergencyActivity.class);
+                    intent.putExtra("alarmtype", "automatic");
                     prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
                     e=prefs.edit();
                     e.putBoolean("autoAlarm", true);
