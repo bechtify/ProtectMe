@@ -62,7 +62,6 @@ public class EmergencyContactsActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-        addDatatoView();
     }
 
     public void onAdd(View view){
@@ -137,4 +136,5 @@ public class EmergencyContactsActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
 }

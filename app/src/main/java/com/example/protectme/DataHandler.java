@@ -24,16 +24,17 @@ public class DataHandler {
 
     public void execute(final URL url, final EmergencyContactsActivity context){
         Thread thread = new Thread(new Runnable() {
-
             @Override
             public void run() {
-        String response;
-        try {
-            response = new Scanner( url.openStream() ).useDelimiter( "\\Z" ).next();
-            context.addData(response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }}});
+                String response;
+                try {
+                    response = new Scanner( url.openStream() ).useDelimiter( "\\Z" ).next();
+                    context.addData(response);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         thread.start();
     }
 }
