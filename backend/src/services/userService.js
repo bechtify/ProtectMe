@@ -32,7 +32,7 @@ const registerUser = async (userInfo) => {
 };
 
 // service for POST /user/login
-const logInUser = async (username, password) => {
+const logInUser = async (username, password, push_token) => {
   const user = await selectUserByUsername(username);
   if (!user) {
     return Promise.reject("Unable to login!");
@@ -42,6 +42,7 @@ const logInUser = async (username, password) => {
   if (!isMatch) {
     return Promise.reject("Unable to login!");
   }
+  await userStorage.updateToken(user.user_id, push_token);
   return Promise.resolve(user.user_id);
 };
 
