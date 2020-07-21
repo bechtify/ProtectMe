@@ -86,6 +86,7 @@ public class EmergencyActivity extends AppCompatActivity {
     }
 
     public void abort(View view){
+        RideActivity.activeAlarm=false;
         mp.stop();//stops the alarm tone
         onBackPressed();//navigates back to ride
     }
@@ -148,6 +149,7 @@ public class EmergencyActivity extends AppCompatActivity {
                 finally {
                     if (urlConnection != null) {
                         urlConnection.disconnect();
+                        RideActivity.activeAlarm=false;
                     }
                 }
             }
@@ -164,6 +166,7 @@ public class EmergencyActivity extends AppCompatActivity {
     }
 
     public void onBackPressed(){
+        RideActivity.activeAlarm=false;
         timer.cancel();
         mp.stop();//stops the alarm tone
         super.onBackPressed();

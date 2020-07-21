@@ -53,6 +53,8 @@ public class RideActivity extends AppCompatActivity implements SensorEventListen
 
     FusedLocationProviderClient fusedLocationProviderClient;
 
+    static boolean activeAlarm=false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getSupportActionBar().hide(); //hide the title bar
@@ -156,6 +158,7 @@ public class RideActivity extends AppCompatActivity implements SensorEventListen
         Intent intent = new Intent(RideActivity.this, EmergencyActivity.class);
         intent.putExtra("longitude", longitude);
         intent.putExtra("latitude", latitude);
+        activeAlarm=true;
         startActivity(intent);
     }
 
@@ -175,13 +178,16 @@ public class RideActivity extends AppCompatActivity implements SensorEventListen
             if((((mVelocity*100)>138.9)||((mVelocity*100)<-138.9))&&((event.values[0]*100)>10)){ //crash will be detected if Velocity is greater than 5 km/h (negative and positive) and acceleration is greater than 10 cm/s*s
                 if(mCrashTimeStamp==0||((System.currentTimeMillis()-mCrashTimeStamp)>5000)){ //crash can be detected every five seconds
                     mCrashTimeStamp = System.currentTimeMillis();
-                    Intent intent = new Intent(RideActivity.this, EmergencyActivity.class);
-                    intent.putExtra("alarmtype", "automatic");
-                    prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
-                    e=prefs.edit();
-                    e.putBoolean("autoAlarm", true);
-                    e.commit();
-                    startActivity(intent);
+                    if(activeAlarm==false) {
+                        Intent intent = new Intent(RideActivity.this, EmergencyActivity.class);
+                        intent.putExtra("alarmtype", "automatic");
+                        prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
+                        e = prefs.edit();
+                        e.putBoolean("autoAlarm", true);
+                        e.commit();
+                        activeAlarm = true;
+                        startActivity(intent);
+                    }
                 }
             }
 
