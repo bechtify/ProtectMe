@@ -56,11 +56,11 @@ public class EmergencyContactAdapter extends RecyclerView.Adapter<EmergencyConta
     public void onBindViewHolder(@NonNull EmergencyContactViewholder holder, int position) {
         EmergencyContact contact=mData.get(position);
 
-        holder.tvAddress.setText(contact.mAddress);
-        holder.tvDisplayName.setText(contact.mDisplayName);
-        holder.tvPhone.setText(contact.mPhone);
-        holder.tvRelationship.setText(contact.mRelationship);
-        holder.tvUsername.setText(contact.mUsername);
+        holder.tvAddress.setText(contact.address);
+        holder.tvDisplayName.setText(contact.display_name);
+        holder.tvPhone.setText(contact.phone);
+        holder.tvRelationship.setText(contact.relationship);
+        holder.tvUsername.setText(contact.username);
     }
 
     @Override

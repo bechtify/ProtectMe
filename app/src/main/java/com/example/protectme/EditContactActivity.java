@@ -91,7 +91,7 @@ public class EditContactActivity extends AppCompatActivity {
         };
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mRelationship.setAdapter(adapter);
-
+        /*
         mUsername.setText(contact.mUsername);
         mDisplayName.setText(contact.mDisplayName);
         mPhone.setText(contact.mPhone);
@@ -102,7 +102,7 @@ public class EditContactActivity extends AppCompatActivity {
             mRelationship.setSelection(2);
         } else if(contact.mRelationship.equals("Colleagues")){
             mRelationship.setSelection(3);
-        }
+        }*/
     }
 
     public void onSave(View view){
@@ -112,11 +112,11 @@ public class EditContactActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT);
             toast.show();
         }else {
-            EmergencyContact myObject = new EmergencyContact(mUsername.getText().toString(), mRelationship.getSelectedItem().toString(), mDisplayName.getText().toString(), mPhone.getText().toString(), mAddress.getText().toString());
+            //EmergencyContact myObject = new EmergencyContact(mUsername.getText().toString(), mRelationship.getSelectedItem().toString(), mDisplayName.getText().toString(), mPhone.getText().toString(), mAddress.getText().toString());
             Gson gson = new Gson();
-            String json = gson.toJson(myObject);//Object gets casted to String in order to save it in SharedPrefs
+            //String json = gson.toJson(myObject);//Object gets casted to String in order to save it in SharedPrefs
             e = prefs.edit();
-            e.putString(Integer.toString(contactNumber), json);
+            //e.putString(Integer.toString(contactNumber), json);
             e.commit();
             onBackPressed();
         }

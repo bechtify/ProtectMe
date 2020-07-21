@@ -3,18 +3,20 @@ package com.example.protectme;
 import android.view.View;
 
 public class EmergencyContact {
-    String mUsername;
-    String mRelationship;
-    String mDisplayName;
-    String mPhone;
-    String mAddress;
+    String contact_id;
+    String username;
+    String display_name;
+    String phone;
+    String address;
+    String relationship;
 
-    public EmergencyContact(String mUsername, String mRelationship, String mDisplayName, String mPhone, String mAddress) {
-        this.mUsername = mUsername;
-        this.mRelationship = mRelationship;
-        this.mDisplayName = mDisplayName;
-        this.mPhone = mPhone;
-        this.mAddress = mAddress;
+    public EmergencyContact(String contact_id, String username, String display_name, String phone, String address, String relationship) {
+        this.contact_id = contact_id;
+        this.username = username;
+        this.display_name = display_name;
+        this.phone = phone;
+        this.address = address;
+        this.relationship = relationship;
     }
 
     public void onContact(View view){
