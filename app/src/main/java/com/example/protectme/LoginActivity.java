@@ -1,5 +1,6 @@
 package com.example.protectme;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -12,6 +13,10 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.gson.Gson;
 
 import org.json.JSONObject;
@@ -33,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
 
     SharedPreferences prefs;
     SharedPreferences.Editor e;
+    String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,18 +51,41 @@ public class LoginActivity extends AppCompatActivity {
         prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
         String usernameValue = prefs.getString("username", null);
         String passwordValue = prefs.getString("password", null);
+        Intent intent = getIntent();
+        if(intent.getStringExtra("name")!=null){
+            Intent emergencyIntent = new Intent(this, EmergencyNotificationActivity.class);
+            emergencyIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            emergencyIntent.putExtra("name", intent.getStringExtra("name"));
+            emergencyIntent.putExtra("latitude", intent.getStringExtra("latitude"));
+            emergencyIntent.putExtra("longitude", intent.getStringExtra("longitude"));
+            startActivity(emergencyIntent);
+        }
+
         if(usernameValue!=null){
             username.setText(usernameValue);
         }
         if(passwordValue!=null){
             password.setText(passwordValue);
         }
+
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            return;
+                        }
+                        // Get new Instance ID token
+                        token = task.getResult().getToken();
+                    }
+                });
     }
 
     public void onLogin(View view){
         username = (EditText) findViewById(R.id.tvUsername);
         password  = (EditText) findViewById(R.id.tvPassword);
         prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
+
 
         Thread thread = new Thread(){
             public void run(){
@@ -69,6 +98,7 @@ public class LoginActivity extends AppCompatActivity {
                     String jsonString = new JSONObject()
                             .put("username", username.getText().toString())
                             .put("password", password.getText().toString())
+                            .put("push_token", token)
                             .toString();
                     URL url = new URL("https://protectme.the-rothley.de/users/login");
                     urlConnection  = (HttpURLConnection) url.openConnection();

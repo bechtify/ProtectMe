@@ -132,7 +132,7 @@ public class RegisterActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             public void run() {
                                 Toast toast = Toast.makeText(RegisterActivity.this,
-                                        "Invalid credentials.",
+                                        "Error while registration.",
                                         Toast.LENGTH_SHORT);
                                 toast.show();
                             }

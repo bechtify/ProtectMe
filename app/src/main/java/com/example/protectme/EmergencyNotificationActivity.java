@@ -35,7 +35,7 @@ public class EmergencyNotificationActivity extends AppCompatActivity {
         latitude = intent.getStringExtra("latitude");
         longitude = intent.getStringExtra("longitude");
         tvName.setText(name);
-        tvLocation.setText("Latitude:" + latitude + " Longitude:" + longitude);
+        tvLocation.setText("Latitude: " + latitude + " Longitude: " + longitude);
     }
 
     public void onMaps(View view) {
