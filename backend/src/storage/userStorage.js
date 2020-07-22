@@ -17,8 +17,12 @@ const createUser = async (userInfo) => {
   return user_id;
 };
 
+
+const updateToken = (user_id, push_token) =>  knex("user").where("user_id", user_id).update({push_token});
+
 module.exports = {
     selectUserById,
     selectUserByUsername,
-    createUser
+    createUser,
+    updateToken
   };

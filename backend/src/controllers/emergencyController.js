@@ -16,6 +16,11 @@ const postEmergency = async (req, res) => {
   }
 };
 
+
+const _call_emergency_contacts = async (emergencyInfo, userId) => {
+
+}
+
 module.exports = {
   postEmergency,
 };
