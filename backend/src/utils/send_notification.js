@@ -10,7 +10,6 @@ const sendNotificationToContacts = (contactTokens, emergencyInfo, userInfo) => {
   const username = userInfo[0].firstname + " " + userInfo[0].surname;
   const payload = username + " has an emergency!"
 
-   console.log(userInfo);
   var message = {
     data: {
       name: username,
