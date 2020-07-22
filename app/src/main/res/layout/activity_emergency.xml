@@ -20,7 +20,7 @@
         android:layout_width="203dp"
         android:layout_height="107dp"
         android:layout_marginTop="30dp"
-        android:text="Emergency Recognized"
+        android:text="Emergency recognized!"
         android:textAlignment="center"
         android:textSize="36sp"
         app:layout_constraintEnd_toEndOf="parent"

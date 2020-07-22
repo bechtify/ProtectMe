@@ -2,9 +2,13 @@ package com.example.protectme;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.util.Log;
 import android.view.View;
 
@@ -39,6 +43,7 @@ public class LoginActivity extends AppCompatActivity {
     SharedPreferences prefs;
     SharedPreferences.Editor e;
     String token;
+    private static final int REQUEST_CALL = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,12 +52,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         username = (EditText) findViewById(R.id.tvUsername);
-        password  = (EditText) findViewById(R.id.tvPassword);
+        password = (EditText) findViewById(R.id.tvPassword);
         prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
         String usernameValue = prefs.getString("username", null);
         String passwordValue = prefs.getString("password", null);
         Intent intent = getIntent();
-        if(intent.getStringExtra("name")!=null){
+        if (intent.getStringExtra("name") != null) {
             Intent emergencyIntent = new Intent(this, EmergencyNotificationActivity.class);
             emergencyIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             emergencyIntent.putExtra("name", intent.getStringExtra("name"));
@@ -61,10 +66,12 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(emergencyIntent);
         }
 
-        if(usernameValue!=null){
+
+
+        if (usernameValue != null) {
             username.setText(usernameValue);
         }
-        if(passwordValue!=null){
+        if (passwordValue != null) {
             password.setText(passwordValue);
         }
 
@@ -79,19 +86,26 @@ public class LoginActivity extends AppCompatActivity {
                         token = task.getResult().getToken();
                     }
                 });
+
+
+        if (ContextCompat.checkSelfPermission(LoginActivity.this,
+                Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(LoginActivity.this,
+                    new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL);}
+
     }
 
-    public void onLogin(View view){
+    public void onLogin(View view) {
         username = (EditText) findViewById(R.id.tvUsername);
-        password  = (EditText) findViewById(R.id.tvPassword);
+        password = (EditText) findViewById(R.id.tvPassword);
         prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
 
 
-        Thread thread = new Thread(){
-            public void run(){
-                HttpURLConnection urlConnection=null;
-                try  {
-                    e =prefs.edit();
+        Thread thread = new Thread() {
+            public void run() {
+                HttpURLConnection urlConnection = null;
+                try {
+                    e = prefs.edit();
                     e.putString("username", username.getText().toString());
                     e.putString("password", password.getText().toString());
                     e.commit();
@@ -101,7 +115,7 @@ public class LoginActivity extends AppCompatActivity {
                             .put("push_token", token)
                             .toString();
                     URL url = new URL("https://protectme.the-rothley.de/users/login");
-                    urlConnection  = (HttpURLConnection) url.openConnection();
+                    urlConnection = (HttpURLConnection) url.openConnection();
                     urlConnection.setRequestProperty("Content-Type", "application/json");
                     urlConnection.setRequestMethod("POST");
                     urlConnection.setDoOutput(true);
@@ -114,7 +128,7 @@ public class LoginActivity extends AppCompatActivity {
                     writer.flush();
 
                     int code = urlConnection.getResponseCode();
-                    if (code !=  200 && code !=  201) {
+                    if (code != 200 && code != 201) {
                         runOnUiThread(new Runnable() {
                             public void run() {
                                 Toast toast = Toast.makeText(LoginActivity.this,
@@ -130,37 +144,36 @@ public class LoginActivity extends AppCompatActivity {
                             urlConnection.getInputStream()));
 
                     String userID = rd.readLine();
-                    e=prefs.edit();
+                    e = prefs.edit();
                     e.putString("userID", userID);
                     e.commit();
                     Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
                     startActivity(intent);
                 } catch (Exception e) {
                     e.printStackTrace();
-                }
-                finally {
+                } finally {
                     if (urlConnection != null) {
                         urlConnection.disconnect();
                     }
                 }
             }
         };
-        if(username.getText().toString().equals("")||password.getText().toString().equals("")){
+        if (username.getText().toString().equals("") || password.getText().toString().equals("")) {
             Toast toast = Toast.makeText(getApplicationContext(),
                     "Please fill out all fields.",
                     Toast.LENGTH_SHORT);
             toast.show();
-        }else{
+        } else {
             thread.start();
         }
     }
 
-    public void onRegister(View view){
+    public void onRegister(View view) {
         Intent intent = new Intent(LoginActivity.this, EmergencyNotificationActivity.class);
         startActivity(intent);
     }
 
-    public void onDev(View view){
+    public void onDev(View view) {
         Intent intent = new Intent(LoginActivity.this, CrashDetectionDevelopmentActivity.class);
         startActivity(intent);
     }

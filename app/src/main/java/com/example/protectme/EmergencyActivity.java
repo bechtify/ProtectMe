@@ -1,7 +1,9 @@
 package com.example.protectme;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.Context;
@@ -41,6 +43,8 @@ import java.util.Locale;
 
 public class EmergencyActivity extends AppCompatActivity implements LocationListener {
 
+    private static final int REQUEST_CALL = 1;
+
     public MediaPlayer mp;
     protected TextView mTime;
     Button abort;
@@ -52,6 +56,7 @@ public class EmergencyActivity extends AppCompatActivity implements LocationList
 
     String longitude;
     String latitude;
+    String emergencyNumber;
     FusedLocationProviderClient fusedLocationProviderClient;
 
     TextView tvLocation;
@@ -64,6 +69,7 @@ public class EmergencyActivity extends AppCompatActivity implements LocationList
         setContentView(R.layout.activity_emergency);
 
         prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
+        emergencyNumber = prefs.getString("npPhone", null);
         boolean autoAlarm = prefs.getBoolean("autoAlarm", false);//checks if emergency was triggered automatically @TODO: not used
         Uri alarmSound =
                 RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
@@ -248,6 +254,7 @@ public class EmergencyActivity extends AppCompatActivity implements LocationList
             }
         };
         thread.start();
+        makePhoneCall();
     }
 
     public void onCallHelp(View view) {
@@ -263,5 +270,22 @@ public class EmergencyActivity extends AppCompatActivity implements LocationList
         timer.cancel();
         mp.stop();//stops the alarm tone
         super.onBackPressed();
+    }
+
+    private void makePhoneCall() {
+        String dial = "tel:" + emergencyNumber;
+        startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(dial)));
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_CALL) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                makePhoneCall();
+            } else {
+                Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

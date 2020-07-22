@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
 
@@ -16,6 +17,7 @@ public class EmergencySettingsActivity extends AppCompatActivity {
 
     public NumberPicker minutesPicker;
     public NumberPicker secondsPicker;
+    public EditText phoneNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,12 +52,19 @@ public class EmergencySettingsActivity extends AppCompatActivity {
             }
         });
 
+        //Set emergency number field
+        phoneNumber = (EditText) findViewById(R.id.etPhoneNumber);
+
         //Sets values of numberpickers
         prefs = this.getSharedPreferences("prefs", MODE_PRIVATE);
         int minutes = prefs.getInt("npMinutes", 0);
         int seconds = prefs.getInt("npSeconds", 30);
+        String number = prefs.getString("npPhone", null);
         minutesPicker.setValue(minutes);
         secondsPicker.setValue(seconds);
+
+        //Set emergency number field
+        phoneNumber.setText(number);
 
     }
 
@@ -65,6 +74,7 @@ public class EmergencySettingsActivity extends AppCompatActivity {
         e=prefs.edit();
         e.putInt("npMinutes", minutesPicker.getValue());
         e.putInt("npSeconds", secondsPicker.getValue());
+        e.putString("npPhone", phoneNumber.getText().toString().trim());
         e.commit();
         onBackPressed();
     }
