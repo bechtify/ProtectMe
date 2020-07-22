@@ -50,14 +50,15 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
-        android:layout_width="357dp"
-        android:layout_height="468dp"
+        android:layout_width="348dp"
+        android:layout_height="393dp"
         android:layout_marginTop="14dp"
         android:layout_marginBottom="24dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        app:layout_constraintTop_toBottomOf="@+id/textView3"
+        app:layout_constraintVertical_bias="0.0" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -97,12 +98,14 @@
         android:id="@+id/textView3"
         android:layout_width="343dp"
         android:layout_height="65dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="14dp"
         android:text="These contacts will be informed in an emergency:"
         android:textAlignment="center"
         android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/tvHeader" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
