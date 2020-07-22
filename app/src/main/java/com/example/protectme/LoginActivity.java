@@ -169,7 +169,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void onRegister(View view) {
-        Intent intent = new Intent(LoginActivity.this, EmergencyNotificationActivity.class);
+        Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
         startActivity(intent);
     }
 
