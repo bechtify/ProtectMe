@@ -23,6 +23,7 @@ public class EmergencyNotificationActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getSupportActionBar().hide(); //hide the title bar
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_emergency_notification);
         tvName = (TextView) findViewById(R.id.tvNotifName);

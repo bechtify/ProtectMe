@@ -126,7 +126,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void onRegister(View view){
-        Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+        Intent intent = new Intent(LoginActivity.this, EmergencyNotificationActivity.class);
         startActivity(intent);
     }
 
