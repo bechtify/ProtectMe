@@ -34,7 +34,7 @@ const registerUser = async (req, res) => {
 const logInUser = async (req, res, next) => {
   try {
     const credentials = req.body;
-    let result = await userService.logInUser(credentials.username, credentials.password);
+    let result = await userService.logInUser(credentials.username, credentials.password, credentials.push_token);
     if (result) {
       res.status(200).json(result);
     } else {
